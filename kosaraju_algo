@@ -1,0 +1,59 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define pb push_back
+#define N 100005
+vector<int> gr[N];
+vector<int> grr[N];
+int vis[N]={0};
+vector<int> ordering;
+vector<int> comp[N];
+void dfs(int node){
+    vis[node]=1;
+    for(auto p:gr[node]){
+        if(!vis[p]){
+            dfs(p);
+        }
+    }
+    ordering.pb(node);
+}
+void dfs_rev(int node,int col){
+    vis[node]=1;
+    comp[col].pb(node);
+    for(auto g:grr[node]){
+        if(!vis[g]){
+            dfs_rev(g,col);
+        }
+    }
+}
+int main(){
+    int n,m;
+    cin>>n>>m;
+    int x,y;
+    while(m--){
+        cin>>x>>y;
+        gr[x].pb(y);
+        grr[y].pb(x);
+    }
+    for(int i=1;i<=n;i++){
+        if(!vis[i]){
+            dfs(i);
+        }
+    }
+    memset(vis,0,sizeof(vis));
+    int col=0;
+    for(int i=n;i>=1;i--){
+        if(!vis[ordering[i]]){
+            //traverse the ordering array obtained from initial graph and find paths in reverse graph
+            dfs_rev(ordering[i],col);
+            col++;
+        }
+    }
+    for(int i=1;i<col;i++){
+        cout<<i<<endl;
+        for(auto x:comp[i]){
+            cout<<x<<" ";
+        }
+        cout<<endl;
+    }
+    return 0;
+}
